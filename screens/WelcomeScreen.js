@@ -141,7 +141,7 @@ export default class WelcomeScreen extends Component {
                     {this.showModal()}
                 </View>
                 <View>
-                    <SanataAnimation />
+                    {/* <SanataAnimation /> */}
                     <Text style={styles.title}>Book Santa</Text>
                 </View>
                 <View>

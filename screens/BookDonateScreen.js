@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, Modal, Scro
 import db from '../config'
 import firebase from 'firebase'
 import { ListItem } from 'react-native-elements'
-import { MyHeader } from '../components/MyHeader'
+import MyHeader from '../components/MyHeader'
 
 export default class BookDonateScreen extends Component {
     constructor() {
@@ -30,7 +30,9 @@ export default class BookDonateScreen extends Component {
                 title={item.book_name}
                 subtitle={item.reason_to_request}
                 titleStyle={{ color: 'black', fontWeight: 'bold' }}
-                rightElement={<TouchableOpacity style={styles.button}>
+                rightElement={<TouchableOpacity style={styles.button} onPress={() => {
+                    this.props.navigation.navigate('ReceiverDetails', { 'Details': item })
+                }}>
                     <Text style={{ color: '#ffff' }}>View</Text>
                 </TouchableOpacity>}
                 bottomDivider
