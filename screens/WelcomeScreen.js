@@ -30,6 +30,7 @@ export default class WelcomeScreen extends Component {
                         last_name: this.state.lastName,
                         contact_number: this.state.contact,
                         address: this.state.address,
+                        IsBookRequestActive=false
                     })
                     return Alert.alert("User added successfully", " ", [{
                         text: 'Ok', onPress: () => this.setState({

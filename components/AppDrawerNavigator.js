@@ -6,6 +6,7 @@ import { AppTabNavigator } from './AppTabNavigator'
 import SettingScreen from '../screens/SettingScreen'
 import MyDonationScreen from '../screens/MyDonationScreen'
 import NotificationScreen from '../screens/NotificationsScreen'
+import MyReceivedBookScreen from '../screens/MyReceivedBookScreen'
 
 export const AppDrawerNavigator = createDrawerNavigator({
     Home: {
@@ -19,6 +20,9 @@ export const AppDrawerNavigator = createDrawerNavigator({
     },
     NotificationScreen: {
         screen: NotificationScreen
+    },
+    MyReceivedBook: {
+        screen: MyReceivedBookScreen
     }
 },
 
