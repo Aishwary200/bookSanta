@@ -81,7 +81,11 @@ export default class MyDonationScreen extends Component {
         this.requestRef();
     }
     render() {
-        return (<View style={{ flex: 1 }}> <MyHeader navigation={this.props.navigation} title="My Donations" /> <View style={{ flex: 1 }}> {this.state.allDonations.length === 0 ? (<View style={styles.subtitle}> <Text style={{ fontSize: 20 }}>List of all book Donations</Text> </View>) : (<FlatList keyExtractor={this.keyExtractor} data={this.state.allDonations} renderItem={this.renderItem} />)} </View> </View>)
+        return (
+<View style={{ flex: 1 }}> 
+<MyHeader navigation={this.props.navigation} 
+title="My Donations" /> 
+<View style={{ flex: 1 }}> {this.state.allDonations.length === 0 ? (<View style={styles.subtitle}> <Text style={{ fontSize: 20 }}>List of all book Donations</Text> </View>) : (<FlatList keyExtractor={this.keyExtractor} data={this.state.allDonations} renderItem={this.renderItem} />)} </View> </View>)
 
     }
 }
