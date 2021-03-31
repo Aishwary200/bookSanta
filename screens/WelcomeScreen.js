@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, Modal, ScrollView, KeyboardAvoidingView } from 'react-native';
 import db from '../config'
 import firebase from 'firebase'
-import SanataAnimation from '../components/SantaClaus'
 
 export default class WelcomeScreen extends Component {
     constructor() {
@@ -30,7 +29,7 @@ export default class WelcomeScreen extends Component {
                         last_name: this.state.lastName,
                         contact_number: this.state.contact,
                         address: this.state.address,
-                        IsBookRequestActive=false
+                        IsBookRequestActive: false
                     })
                     return Alert.alert("User added successfully", " ", [{
                         text: 'Ok', onPress: () => this.setState({

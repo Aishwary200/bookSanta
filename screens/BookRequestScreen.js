@@ -3,6 +3,7 @@ import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, Modal, Scro
 import db from '../config'
 import firebase from 'firebase'
 import MyHeader from '../components/MyHeader'
+import { BookSearch } from 'react-native-google-books';
 
 export default class BookRequestScreen extends Component {
     constructor() {
@@ -16,7 +17,10 @@ export default class BookRequestScreen extends Component {
             requestId: '',
             userDocId: '',
             docId: '',
-            bookStatus: ''
+            bookStatus: '',
+            showFlatlist: false,
+            dataSource: '',
+            imageLink: ''
         }
     }
     createUniqueId() {
@@ -49,16 +53,18 @@ export default class BookRequestScreen extends Component {
                 })
             })
     }
-    addRequest = (bookName, reasonToRequest) => {
+    addRequest = async (bookName, reasonToRequest) => {
         var userId = this.state.userId
         var randomRequestId = this.createUniqueId()
+        var books = await BookSearch.searchbook(bookName, 'AIzaSyA2u6wJ78Ii_NiyGD4nN82UCHb6lQv6UrM')
         db.collection('requested_books').add({
             'user_id': userId,
             'book_name': bookName,
             'reason_to_request': reasonToRequest,
             'request_id': randomRequestId,
             'date': firebase.firestore.FieldValue.serverTimestamp(),
-            'book_status': 'requested'
+            'book_status': 'requested',
+            'image_link': books.data[0].volumeInfo.imageLinks.smallThumbnail()
         })
         await this.getBookRequest()
         db.collection('users').where('email_id', '==', userId).get()
@@ -124,6 +130,30 @@ export default class BookRequestScreen extends Component {
             "bookStatus": "received",
         })
     }
+    getBooksFromApi = async (bookName) => {
+        this.setState({
+            bookName: bookName
+        })
+        if (bookName.length > 2) {
+            var books = await BookSearch.searchbook(bookName, 'AIzaSyA2u6wJ78Ii_NiyGD4nN82UCHb6lQv6UrM')
+            this.setState({
+                dataSource: books.data,
+                showFlatlist: true
+            })
+
+        }
+    }
+    renderItem = ({ item, i }) => {
+        console.log("image link ");
+        let obj = { title: item.volumeInfo.title, selfLink: item.selfLink, buyLink: item.saleInfo.buyLink, imageLink: item.volumeInfo.imageLinks }
+        return (
+            <TouchableHighlight style={{ alignItems: "center", backgroundColor: "#DDDDDD", padding: 10, width: '90%', }}
+                activeOpacity={0.6} underlayColor="#DDDDDD"
+                onPress={() => {
+                    this.setState({ showFlatlist: false, bookName: item.volumeInfo.title, })
+                }} bottomDivider >
+                <Text> {item.volumeInfo.title} </Text> </TouchableHighlight>)
+    }
     componentDidMount() {
         this.getBookRequest();
         this.getIsBookRequestActive();
@@ -174,19 +204,19 @@ export default class BookRequestScreen extends Component {
             //     </View>
             // )
             return (
-                <View style={{ flex: 1, justifyContent: 'center' }}>
-                    <View style={{ borderColor: "orange", borderWidth: 2, justifyContent: 'center', alignItems: 'center', padding: 10, margin: 10 }}>
-                        <Text>Book Name</Text> <Text>{this.state.requestedBookName}</Text>
-                    </View>
-                    <View style={{ borderColor: "orange", borderWidth: 2, justifyContent: 'center', alignItems: 'center', padding: 10, margin: 10 }}>
-                        <Text> Book Status
-                            </Text>
-                        <Text>{this.state.bookStatus}</Text> </View>
-                    <TouchableOpacity style={{ borderWidth: 1, borderColor: 'orange', backgroundColor: "orange", width: 300, alignSelf: 'center', alignItems: 'center', height: 30, marginTop: 30 }}
-                        onPress={() => {
-                            this.sendNotification()
-                            this.updateBookRequestStatus(); this.receivedBooks(this.state.requestedBookName)
-                        }}> <Text>I recieved the book </Text> </TouchableOpacity> </View>
+                <View style={{ flex: 1 }}>
+                    <MyHeader title="Request Book" navigation={this.props.navigation} />
+                    <View>
+                        <TextInput style={styles.formTextInput} placeholder={"enter book name"}
+                            onChangeText={text => this.getBooksFromApi(text)}
+                            onClear={text => this.getBooksFromApi('')} value={this.state.bookName} />
+                        {this.state.showFlatlist ? (
+                            <FlatList data={this.state.dataSource}
+                                renderItem={this.renderItem} enableEmptySections={true} style={{ marginTop: 10 }}
+                                keyExtractor={(item, index) => index.toString()} />)
+                            : (<View style={{ alignItems: 'center' }}>
+                                <TextInput style={[styles.formTextInput, { height: 300 }]} multiline numberOfLines={8}
+                                    placeholder={"Why do you need the book"} onChangeText={(text) => { this.setState({ reasonToRequest: text }) }} value={this.state.reasonToRequest} /> <TouchableOpacity style={styles.button} onPress={() => { this.addRequest(this.state.bookName, this.state.reasonToRequest); }} > <Text>Request</Text> </TouchableOpacity> </View>)} </View> </View>
 
             )
         }

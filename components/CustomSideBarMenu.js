@@ -30,7 +30,7 @@ export default class CustomSideBarMenu extends Component {
     }
     getUserProfile = () => {
         db.collection('users').where('email_id', '==', this.state.userId)
-            .onSnapshor((querySnapshot) => {
+            .onSnapshot((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     this.setState({
                         name: doc.data().first_name + ' ' + doc.data().last_name
